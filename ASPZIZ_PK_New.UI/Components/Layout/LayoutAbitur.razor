@@ -1,0 +1,66 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <nav class="navbar bg-primary" role="navigation">
+        <div class="container-fluid">
+
+
+            <a class="navbar-brand" href="home/menu" title="Автоматизированная система подачи заявлений и зачисления">АСПЗиЗ</a>
+            <p class="navbar-text"></p>
+
+
+            @{
+                // UserModel current_user = UserCurrent.Get(User);
+                // if (current_user.Permissions.Table)
+                // {
+                //     @Html.Partial("_PartialStatus", current_user.UserID.ToString())
+                // }
+            }
+            @* <div id="menucontainer">
+                <div id="logoutdisplay"> *@
+            <div class="navbar-nav navbar-right">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form class="d-flex" action="Account/Logout" method="post">
+                        <label class="navbar-text me-2">Пользователь: <strong>@User.Identity.Name</strong></label>
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="Home/Menu" />
+                        <button type="submit" class="btn btn-outline-dark">
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                        </button>
+                    </form>
+
+                }
+                else
+                {
+                    <NavLink class="nav-link" href="Account/Login">
+                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
+                    </NavLink>
+                }
+            </div>
+            @* </div>
+            </div> *@
+        </div>
+    </nav>
+</div>
+<!-- Body -->
+<main class="container-fluid">
+    
+        <CascadingValue Value="User">
+            @Body
+        </CascadingValue>
+   
+</main>
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+
+    ClaimsPrincipal User = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateTask;
+
+        User = authState.User;
+    }
+}

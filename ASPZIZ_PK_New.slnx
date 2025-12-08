@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ASPZIZ_PK_New.Domain/ASPZIZ_PK_New.Domain.csproj" />
+  <Project Path="ASPZIZ_PK_New.Features/ASPZIZ_PK_New.Features.csproj" />
+  <Project Path="ASPZIZ_PK_New.Persistence/ASPZIZ_PK_New.Persistence.csproj" />
+  <Project Path="ASPZIZ_PK_New.UI/ASPZIZ_PK_New.UI.csproj" />
+</Solution>

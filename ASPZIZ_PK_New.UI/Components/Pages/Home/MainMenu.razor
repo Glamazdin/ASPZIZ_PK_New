@@ -1,0 +1,81 @@
+﻿@page "/home/menu"
+@layout Layout.LayoutAbitur
+@attribute [StreamRendering]
+@using ASPZIZ_PK_New.UI.Extensions
+
+@if(User==null)
+{
+        <h1>Loading...</h1>
+}
+else
+{
+    <div class="row justify-content-center">
+    <div class="card text-center mt-5" style="width: 20rem;">
+        <div class="card-title">
+            <h3 class="panel-title"><strong>Модули</strong></h3>
+        </div>
+        <div class="list-group">
+            
+                @if (HaveAccess_Abiturs)
+                {
+                <NavLink class="list-group-item list-group-item-action" href="Home/Turn">Абитуриенты</NavLink>
+                }
+                @if (User.Accept)
+                {
+                <NavLink class="list-group-item list-group-item-action" href="accept/list">Зачисление</NavLink>
+                }
+                @if (User.Table_Duty || User.Table_Supervisor)
+                {
+                <NavLink class="list-group-item list-group-item-action" href="room/index">@(User.Table_Duty ? "Дежурство" : "Наблюдение")</NavLink>
+                }
+                @if (User.Adm_Users_Tables_View)
+                {
+                <NavLink class="list-group-item list-group-item-action" href="room/users">Управление столами</NavLink>
+                }
+                @if (User.Stat)
+                {
+                <NavLink class="list-group-item list-group-item-action" href="print/register">Журнал</NavLink>
+                <NavLink class="list-group-item list-group-item-action" href="stat/index">Статистика</NavLink>
+                }
+
+
+                @if (User.Adm)
+                {
+                    <hr />
+                    if (User.Adm_Print_View)
+                    {
+                    <NavLink class="list-group-item list-group-item-action" href="print/list">Печать</NavLink>
+                    }
+                    if (User.Adm_Users_View)
+                    {
+                    <NavLink class="list-group-item list-group-item-action" href="admin/users/list">Пользователи</NavLink>
+                    }
+                    if (User.Adm_Specialities_View)
+                    {
+                    <NavLink class="list-group-item list-group-item-action" href="admin/specialities">Специальности</NavLink>
+                    }
+                    if (User.Adm_Compare_Data)
+                    {
+                    <NavLink class="list-group-item list-group-item-action" href="admin/comparer">Сравнить файлы</NavLink>
+                    }
+                }
+
+                @*<li class="logout">@Html.Partial("_PartialLogOut")</li>*@
+           
+        </div>
+    </div>
+    </div>
+} 
+
+@code {
+
+    [CascadingParameter] ClaimsPrincipal User { get; set; }
+
+    bool HaveAccess_Abiturs => User.Site_View
+                            || User.Turn_View
+                            || User.Admission_View
+                            || User.Accepted_View
+                            || User.NotAccepted_View
+                            || User.Zabr_View;
+    
+}

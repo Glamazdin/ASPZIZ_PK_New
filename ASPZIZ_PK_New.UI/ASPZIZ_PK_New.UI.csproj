@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-ASPZIZ_PK_New_UI-13bb020d-05e5-4aa8-b29d-9316ff950a1d</UserSecretsId>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Easy_CQRS.Net" Version="1.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ASPZIZ_PK_New.Domain\ASPZIZ_PK_New.Domain.csproj" />
+    <ProjectReference Include="..\ASPZIZ_PK_New.Features\ASPZIZ_PK_New.Features.csproj" />
+    <ProjectReference Include="..\ASPZIZ_PK_New.Persistence\ASPZIZ_PK_New.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

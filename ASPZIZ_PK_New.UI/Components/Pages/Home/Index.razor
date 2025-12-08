@@ -1,0 +1,42 @@
+﻿@page "/"
+<PageTitle>Внимание!</PageTitle>
+
+<div class="card text-center">
+    <div class="card-header">
+        @*             <img src="/img/logo/logo-200x200.png" width="100" alt="@Constants.VuzShortName" class="right-logo" />
+ *@            <img src="/img/logo/logo-200x200.png" width="100" alt="БГУИР" class="float-start" />
+
+        @*             <h2 style="text-align:center;">@Constants.VuzFullName</h2>
+ *@            <h2 class="text-center">Белорусский Государственный университет информатики и радиоэлектроники</h2>
+    </div>
+
+    <div class="card-body">
+
+        <div id="warning" class="container">
+            <h3 class="card-title">Автоматизированная система подачи заявления и зачисления</h3>
+            <h3 class="card-title">Внимание!!!</h3>
+            <p class="card-text">
+                Вы пытаетесь подключиться к информационной системе приемной комиссии. Пользоваться
+                этой системой разрешено только работникам приемной комиссии. Несанкционированное
+                использование системы запрещено.
+                <br />
+                <br />
+                Вы желаете продолжить подключение к системе приемной комиссии?
+            </p>
+            <div class="text-center">
+                <a href="account/login" class="blockUiItem btn btn-link">Да</a>
+                @*                           @Html.ActionLink("Да", "LogOn", "Account", new object(), new { @class = "blockUiItem btn btn-link" })
+                             <a href="@Constants.Url_Vuz" class="btn btn-danger">Нет</a>
+ *@                            <a href="#" class="btn btn-danger">Нет</a>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+}
