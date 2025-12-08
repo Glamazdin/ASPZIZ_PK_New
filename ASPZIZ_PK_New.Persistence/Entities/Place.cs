@@ -31,6 +31,9 @@ public partial class Place
     [InverseProperty("Place")]
     public virtual ICollection<PlaceAfterAccept> PlaceAfterAccepts { get; set; } = new List<PlaceAfterAccept>();
 
-    [InverseProperty("Place")]
-    public virtual ICollection<PlaceUser> PlaceUsers { get; set; } = new List<PlaceUser>();
+    //[InverseProperty("Place")]
+    //public virtual ICollection<PlaceUser> PlaceUsers { get; set; } = new List<PlaceUser>();
+
+    //[InverseProperty("Place")]
+    public virtual ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
 }

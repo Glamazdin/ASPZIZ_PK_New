@@ -36,8 +36,10 @@ public class ApplicationUser : IdentityUser<Guid>
     public virtual ICollection<TablesLog> TablesLogAsTable { get; set; } = new List<TablesLog>();
 
 
+    public virtual ICollection<Place> Places { get; set; } = new List<Place>();
+
     //
 
 
-    
+
 }

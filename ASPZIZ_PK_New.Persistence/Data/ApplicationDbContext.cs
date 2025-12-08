@@ -459,16 +459,16 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser, I
                 .HasConstraintName("FK_Palce_AfterAccept_Vuz_Spec");
         });
 
-        modelBuilder.Entity<PlaceUser>(entity =>
-        {
-            entity.HasOne(d => d.Place).WithMany(p => p.PlaceUsers)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Place_User_Place_User");
+        //modelBuilder.Entity<PlaceUser>(entity =>
+        //{
+        //    entity.HasOne(d => d.Place).WithMany(p => p.PlaceUsers)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("FK_Place_User_Place_User");
 
-            entity.HasOne(d => d.User).WithMany(p => p.PlaceUsers)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PlaceUser_AspNetUsers");
-        });
+        //    entity.HasOne(d => d.User).WithMany(p => p.PlaceUsers)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("FK_PlaceUser_AspNetUsers");
+        //});
 
         modelBuilder.Entity<Prikaz>(entity =>
         {
@@ -628,6 +628,12 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser, I
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Vuz_SSUZ_Spec_SSUZ_Spec");
         });
+
+        modelBuilder.Entity<Place>(entity =>
+        {
+            entity.HasMany(p => p.Users).WithMany(p => p.Places);
+        });
+
 
         //modelBuilder.Entity<VwAspnetApplication>(entity =>
         //{
