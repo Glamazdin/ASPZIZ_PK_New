@@ -1,0 +1,127 @@
+﻿<style>
+    .wrap-cell {
+        white-space: normal !important;
+        word-break: break-word;
+        line-height: 1.4;
+        padding: 0.25rem 0.5rem; /* соответствует Compact-режиму */
+    }
+</style>
+<div id="commandcontainer" class="m-3">
+
+    <a class="btn btn-success" id="newButton" href="admin/OKSK/create"><i class="bi bi-plus-circle"></i> Создать </a>
+
+    <button class="btn btn-primary ms-1" id="detailsButton" @onclick="OnDetails"><i class="bi bi-pencil"></i> Изменить </button>
+
+    <button class="btn btn-danger ms-1"
+            id="deleteButton" @onclick="OnDelete">
+        <i class="bi bi-trash"></i> Удалить
+    </button>
+
+</div>
+@* <RadzenDataGrid Data="@specialities" TItem="SpecialityListModel"
+                Density="Density.Compact"
+                AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true"
+                FilterMode="FilterMode.Advanced" AllowSorting="true"
+                RowRender="@OnRowRender"
+                ColumnWidth="auto" 
+                LogicalFilterOperator="LogicalFilterOperator.Or"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedSpecialities>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.FacultyName)" Title="Факультет" />
+        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.SpecialityName)" Title="Название" />
+        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.ObrFormaName)" Title="Форма обучения" />
+        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.ObrVidName)" Title="Вид обучения" />
+        <RadzenDataGridColumn Width="150px" Property="@nameof(SpecialityListModel.Oplata)" Title="Оплата" />
+        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.Srok)" Title="Срок обучения" />
+        <RadzenDataGridColumn Width="150px" Property="@nameof(SpecialityListModel.KolvoMest)" Title="План приема" />
+
+    </Columns>
+</RadzenDataGrid> *@
+
+<RadzenDataGrid Data="@specialities" TItem="SpecialityListModel"
+                Density="Density.Compact"
+                AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="true"
+                FilterMode="FilterMode.Advanced" AllowSorting="false"
+                RowRender="@OnRowRender"                
+                ColumnWidth="auto"
+                LogicalFilterOperator="LogicalFilterOperator.Or"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value="@selectedSpecialities">
+    <Columns>
+        <RadzenDataGridColumn Title="Факультет" Width="150px">
+            <Template Context="item">
+                <div class="wrap-cell">@item.FacultyName</div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Title="Название" Width="200px">
+            <Template Context="item">
+                <div class="wrap-cell">@item.SpecialityName</div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Title="Форма обучения" Width="100px">
+            <Template Context="item">
+                <div class="wrap-cell">@item.ObrFormaName</div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Title="Вид обучения" Width="120px">
+            <Template Context="item">
+                <div class="wrap-cell">@item.ObrVidName</div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Title="Оплата" Width="80px">
+            <Template Context="item">
+                <div class="wrap-cell">@item.Oplata</div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Title="Срок обучения" Width="100px">
+            <Template Context="item">
+                <div class="wrap-cell">@item.Srok</div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Title="План приема" Width="100px">
+            <Template Context="item">
+                <div class="wrap-cell">@item.KolvoMest</div>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Inject] ISender Sender { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+    [Inject] DialogService DialogService { get; set; }
+
+
+    IQueryable<SpecialityListModel> specialities;
+    IList<SpecialityListModel> selectedSpecialities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        specialities = (await Sender.Send(new GetSpecialitiesList(null))).AsQueryable();
+        selectedSpecialities = new List<SpecialityListModel>() { specialities.FirstOrDefault() };
+    }
+
+    void OnRowRender(RowRenderEventArgs<SpecialityListModel> args)
+    {
+        // добавляем атрибут двойного клика
+        args.Attributes["ondblclick"] = EventCallback.Factory.Create<MouseEventArgs>(this, OnDetails);
+
+    }
+
+    void OnDetails()
+    {
+        Navigation.NavigateTo($"admin/speciality/details/{selectedSpecialities.First().VuzSpecId}");
+        // здесь любая логика — например, открыть диалог
+
+    }
+    private async Task OnDelete(MouseEventArgs args)
+    {
+        var result = await DialogService.Confirm(
+            message: $"{selectedSpecialities.First().SpecialityName}",
+            title: "Вы уверены, что хотите удалить?",
+            options: new ConfirmOptions() { OkButtonText = "Да", CancelButtonText = "Нет" }
+        );
+
+        //Debug.WriteLine($"----------------------> {result}");
+    }
+
+}

@@ -1,0 +1,69 @@
+﻿@using System.Diagnostics
+@rendermode InteractiveServer
+@inject DialogService DialogService
+ <div id="commandcontainer" class="m-3">
+   
+    <a class="btn btn-success" id="newButton" href="admin/OKSK/create"><i class="bi bi-plus-circle"></i> Создать </a>
+        
+    <button class="btn btn-primary ms-1" id="detailsButton" @onclick="OnDetails"><i class="bi bi-pencil"></i> Изменить </button>
+        
+    <button class="btn btn-danger ms-1" 
+            id="deleteButton" @onclick="OnDelete" ><i class="bi bi-trash"></i> Удалить </button>
+        
+</div>
+<RadzenDataGrid Data="@specialities" TItem="OKSKModel"
+                Density="Density.Compact"
+                AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true"
+                FilterMode="FilterMode.Advanced" AllowSorting="true"
+                RowRender="@OnRowRender"
+                ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedSpecialities>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(OKSKModel.Name)" Title="Название" />
+        <RadzenDataGridColumn Property="@nameof(OKSKModel.Abbr)" Title="Аббревиатура" />
+        <RadzenDataGridColumn Property="@nameof(OKSKModel.Code)" Title="Код" />
+        <RadzenDataGridColumn Property="@nameof(OKSKModel.Kvalif)" Title="Квалификация" />
+        <RadzenDataGridColumn Property="@nameof(OKSKModel.CountUsed)" Title="Специальностей" />
+
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Inject] ISender Sender { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+
+
+
+    IQueryable<OKSKModel> specialities;
+    IList<OKSKModel> selectedSpecialities;
+
+    protected override async Task OnInitializedAsync()
+    {  
+        specialities = (await Sender.Send(new GetOKSKList())).AsQueryable();
+        selectedSpecialities = new List<OKSKModel>() { specialities.FirstOrDefault() };
+    }
+
+    void OnRowRender(RowRenderEventArgs<OKSKModel> args)
+    {
+        // добавляем атрибут двойного клика
+        args.Attributes["ondblclick"] = EventCallback.Factory.Create<MouseEventArgs>(this, OnDetails);
+
+    }
+
+    void OnDetails()
+    {
+        Navigation.NavigateTo($"admin/OKSK/details/{selectedSpecialities.First().Id}");
+        // здесь любая логика — например, открыть диалог
+
+    }
+    private async Task OnDelete(MouseEventArgs args)
+    {
+        var result = await DialogService.Confirm(
+            message: $"{selectedSpecialities.First().Name}", 
+            title: "Вы уверены, что хотите удалить?",
+            options: new ConfirmOptions(){ OkButtonText = "Да", CancelButtonText = "Нет" }
+        );
+
+        Debug.WriteLine($"----------------------> {result}");
+    }
+}

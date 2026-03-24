@@ -69,7 +69,9 @@ else
 
 @code {
 
-    [CascadingParameter] ClaimsPrincipal User { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+    ClaimsPrincipal User { get; set; }
 
     bool HaveAccess_Abiturs => User.Site_View
                             || User.Turn_View
@@ -77,5 +79,9 @@ else
                             || User.Accepted_View
                             || User.NotAccepted_View
                             || User.Zabr_View;
-    
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateTask;
+        User = authState.User;        
+    }
 }

@@ -1,0 +1,6 @@
+﻿.wrap-cell {
+    white-space: normal !important;
+    word-break: break-word;
+    line-height: 1.4;
+    padding: 0.25rem 0.5rem; /* соответствует Compact-режиму */
+}

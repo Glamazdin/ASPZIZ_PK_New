@@ -3,4 +3,5 @@
   <Project Path="ASPZIZ_PK_New.Features/ASPZIZ_PK_New.Features.csproj" />
   <Project Path="ASPZIZ_PK_New.Persistence/ASPZIZ_PK_New.Persistence.csproj" />
   <Project Path="ASPZIZ_PK_New.UI/ASPZIZ_PK_New.UI.csproj" />
+  <Project Path="Utility/Utility.csproj" Id="ffdbc362-ae31-4f30-9daa-bd1c60a95653" />
 </Solution>

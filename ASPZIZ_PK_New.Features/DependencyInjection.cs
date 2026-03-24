@@ -16,6 +16,7 @@ public static class DependencyInjection
         {
             source.AddCQRS(Assembly.GetAssembly(typeof(DependencyInjection)));
 
+            MapsterConfiguration.Configure();
 
             return source;
         }

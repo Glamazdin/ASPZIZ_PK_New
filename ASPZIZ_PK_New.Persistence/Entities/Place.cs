@@ -26,14 +26,14 @@ public partial class Place
     public string? PlaceCodeForSheetOfRegistration { get; set; }
 
     [InverseProperty("Place")]
-    public virtual ICollection<Abitur> Abiturs { get; set; } = new List<Abitur>();
+    public ICollection<Abitur> Abiturs { get; set; } = new List<Abitur>();
 
     [InverseProperty("Place")]
-    public virtual ICollection<PlaceAfterAccept> PlaceAfterAccepts { get; set; } = new List<PlaceAfterAccept>();
+    public ICollection<PlaceAfterAccept> PlaceAfterAccepts { get; set; } = new List<PlaceAfterAccept>();
 
     //[InverseProperty("Place")]
     //public virtual ICollection<PlaceUser> PlaceUsers { get; set; } = new List<PlaceUser>();
 
-    //[InverseProperty("Place")]
-    public virtual ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
+    
+    //public ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
 }

@@ -1,0 +1,110 @@
+﻿@page "/admin/users/list"
+@layout Layout.LayoutAbitur
+@rendermode InteractiveServer
+@using System.Threading.Tasks
+@using ASPZIZ_PK_New.Features.Admin.Models
+@using ASPZIZ_PK_New.Features.Admin.Users
+@attribute [Authorize(Policy = "CanViewUsers")]
+
+<div id="commandcontainer" class="m-3">
+    @if (User != null)
+    {
+        @if (User.Adm && User.Adm_Users_User_Create)
+        {
+            <a class="btn btn-success" id="newButton" href="admin/users/create"><span class="bi bi-person-add"></span>Создать </a>
+        }
+        @if (User.Adm && User.Adm_Users_User_View)
+        {
+            <button class="btn btn-primary ms-1" id="detailsButton" @onclick="OnDetails"><i class="bi bi-person-check"></i> Просмотреть </button>
+        }
+        @if (User.Adm && User.Adm_Users_User_Delete)
+        {
+            <a class="btn btn-danger ms-1" id="deleteButton" href="admin/users/delete"><span class=" bi bi-person-x"></span>Удалить </a>
+        }
+    }
+</div>
+
+<RadzenDataGrid Data="@users" TItem="UserListModel"
+    Density="Density.Compact" 
+    AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" 
+    FilterMode="FilterMode.Advanced" AllowSorting="true" 
+    PageSize="20" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    RowRender="@OnRowRender"
+    ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" 
+    SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedUser >
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(UserListModel.FullName)" Title="Имя для печати"   />
+        <RadzenDataGridColumn Property="@nameof(UserListModel.Login)" Title="Login"   />
+        <RadzenDataGridColumn Property="@nameof(UserListModel.Place)" Title="Место"  />
+
+        <RadzenDataGridColumn TItem="UserListModel" Property="IsBlocked" Title="Заблокирован">
+            <Template Context="item">
+                <RadzenCheckBox TValue="bool" @bind-Value="item.IsBlocked" Change="@(args => OnIsBlockedChanged(item, args))" />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(UserListModel.LastLoginDate)" Title="Дата входа"  />
+    </Columns>
+</RadzenDataGrid>
+
+
+@code {
+   
+    
+
+    
+}
+
+@code {
+    [Inject] ISender Sender { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+    public ClaimsPrincipal User { get; set; }
+
+    //[PersistentState]
+    IQueryable<UserListModel> users;
+    IList<UserListModel> selectedUser;
+
+    //
+    //ClaimsPrincipal User { get; set; }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var authState = await AuthenticationStateTask;
+
+    //     User = authState.User;
+    // }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateTask;
+        User = authState.User;
+
+        users = (await Sender.Send(new GetUsersList())).AsQueryable();
+        selectedUser = new List<UserListModel>() { users.FirstOrDefault() };
+    }
+
+    async Task OnIsBlockedChanged( UserListModel item, bool value)
+    {
+        if(User.Adm_Users_User_Lock)
+        {
+            await Sender.Send(new ChangeBlockingState(item.Id, value));           
+        }
+               
+    }
+    void OnRowRender(RowRenderEventArgs<UserListModel> args)
+    {
+        // добавляем атрибут двойного клика
+        args.Attributes["ondblclick"] = EventCallback.Factory.Create<MouseEventArgs>(this, OnDetails);
+
+    }
+
+    void OnDetails()
+    {
+        Navigation.NavigateTo($"admin/user/details/{selectedUser.First().Id}");
+        // здесь любая логика — например, открыть диалог
+       
+    }
+}
+

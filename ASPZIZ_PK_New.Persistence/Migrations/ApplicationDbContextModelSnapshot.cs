@@ -846,6 +846,12 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastLoginDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -870,6 +876,9 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<byte>("PlaceId")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -889,6 +898,8 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("PlaceId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1716,32 +1727,6 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
                     b.HasIndex("SpecialityId");
 
                     b.ToTable("Place_AfterAccept");
-                });
-
-            modelBuilder.Entity("ASPZIZ_PK_New.Persistence.Entities.PlaceUser", b =>
-                {
-                    b.Property<int>("UserPlaceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("userPlaceId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserPlaceId"));
-
-                    b.Property<byte>("PlaceId")
-                        .HasColumnType("tinyint")
-                        .HasColumnName("placeId");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("userId");
-
-                    b.HasKey("UserPlaceId");
-
-                    b.HasIndex("PlaceId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Place_User");
                 });
 
             modelBuilder.Entity("ASPZIZ_PK_New.Persistence.Entities.Prikaz", b =>
@@ -3276,6 +3261,17 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
                     b.Navigation("Group");
                 });
 
+            modelBuilder.Entity("ASPZIZ_PK_New.Persistence.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("ASPZIZ_PK_New.Persistence.Entities.Place", "Place")
+                        .WithMany("Users")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
+                });
+
             modelBuilder.Entity("ASPZIZ_PK_New.Persistence.Entities.ConsentForPdp", b =>
                 {
                     b.HasOne("ASPZIZ_PK_New.Persistence.Entities.Abitur", "Abitur")
@@ -3416,25 +3412,6 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
                     b.Navigation("Place");
 
                     b.Navigation("Speciality");
-                });
-
-            modelBuilder.Entity("ASPZIZ_PK_New.Persistence.Entities.PlaceUser", b =>
-                {
-                    b.HasOne("ASPZIZ_PK_New.Persistence.Entities.Place", "Place")
-                        .WithMany("PlaceUsers")
-                        .HasForeignKey("PlaceId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Place_User_Place_User");
-
-                    b.HasOne("ASPZIZ_PK_New.Persistence.Entities.ApplicationUser", "User")
-                        .WithMany("PlaceUsers")
-                        .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("FK_PlaceUser_AspNetUsers");
-
-                    b.Navigation("Place");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ASPZIZ_PK_New.Persistence.Entities.Register", b =>
@@ -3774,8 +3751,6 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
 
                     b.Navigation("PermissionUsers");
 
-                    b.Navigation("PlaceUsers");
-
                     b.Navigation("Registers");
 
                     b.Navigation("TableAsDuty");
@@ -3904,7 +3879,7 @@ namespace ASPZIZ_PK_New.Persistence.Migrations
 
                     b.Navigation("PlaceAfterAccepts");
 
-                    b.Navigation("PlaceUsers");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ASPZIZ_PK_New.Persistence.Entities.SpetializationGrade", b =>

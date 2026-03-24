@@ -19,159 +19,159 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser, I
     }
 
     #region Entities
-    public virtual DbSet<Abitur> Abiturs { get; set; }
+    public  DbSet<Abitur> Abiturs { get; set; }
 
-    public virtual DbSet<AbiturOcenki> AbiturOcenkis { get; set; }
+    public  DbSet<AbiturOcenki> AbiturOcenkis { get; set; }
 
-    public virtual DbSet<AbiturPolupr> AbiturPoluprs { get; set; }
+    public  DbSet<AbiturPolupr> AbiturPoluprs { get; set; }
 
-    public virtual DbSet<AbiturRegStepChangeLog> AbiturRegStepChangeLogs { get; set; }
+    public  DbSet<AbiturRegStepChangeLog> AbiturRegStepChangeLogs { get; set; }
 
-    public virtual DbSet<AbiturZayvl> AbiturZayvls { get; set; }
+    public  DbSet<AbiturZayvl> AbiturZayvls { get; set; }
 
-    public virtual DbSet<Accept> Accepts { get; set; }
+    public  DbSet<Accept> Accepts { get; set; }
 
-    //public virtual DbSet<AspnetApplication> AspnetApplications { get; set; }
+    //public  DbSet<AspnetApplication> AspnetApplications { get; set; }
 
-    //public virtual DbSet<AspnetMembership> AspnetMemberships { get; set; }
+    //public  DbSet<AspnetMembership> AspnetMemberships { get; set; }
 
-    //public virtual DbSet<AspnetPath> AspnetPaths { get; set; }
+    //public  DbSet<AspnetPath> AspnetPaths { get; set; }
 
-    //public virtual DbSet<AspnetPersonalizationAllUser> AspnetPersonalizationAllUsers { get; set; }
+    //public  DbSet<AspnetPersonalizationAllUser> AspnetPersonalizationAllUsers { get; set; }
 
-    //public virtual DbSet<AspnetPersonalizationPerUser> AspnetPersonalizationPerUsers { get; set; }
+    //public  DbSet<AspnetPersonalizationPerUser> AspnetPersonalizationPerUsers { get; set; }
 
-    //public virtual DbSet<AspnetProfile> AspnetProfiles { get; set; }
+    //public  DbSet<AspnetProfile> AspnetProfiles { get; set; }
 
-    //public virtual DbSet<AspnetRole> AspnetRoles { get; set; }
+    //public  DbSet<AspnetRole> AspnetRoles { get; set; }
 
-    //public virtual DbSet<AspnetSchemaVersion> AspnetSchemaVersions { get; set; }
+    //public  DbSet<AspnetSchemaVersion> AspnetSchemaVersions { get; set; }
 
-    //public virtual DbSet<AspnetUser> AspnetUsers { get; set; }
+    //public  DbSet<AspnetUser> AspnetUsers { get; set; }
 
-    //public virtual DbSet<AspnetWebEventEvent> AspnetWebEventEvents { get; set; }
+    //public  DbSet<AspnetWebEventEvent> AspnetWebEventEvents { get; set; }
 
-    public virtual DbSet<ConsentForPdp> ConsentForPdps { get; set; }
+    public  DbSet<ConsentForPdp> ConsentForPdps { get; set; }
 
-    public virtual DbSet<ConsentPdp> ConsentPdps { get; set; }
+    public  DbSet<ConsentPdp> ConsentPdps { get; set; }
 
-    public virtual DbSet<CtCertificaty> CtCertificaties { get; set; }
+    public  DbSet<CtCertificaty> CtCertificaties { get; set; }
 
-    public virtual DbSet<CtUchastniki> CtUchastnikis { get; set; }
+    public  DbSet<CtUchastniki> CtUchastnikis { get; set; }
 
-    public virtual DbSet<Customer> Customers { get; set; }
+    public  DbSet<Customer> Customers { get; set; }
 
-    public virtual DbSet<EntrantsOfInnerExam> EntrantsOfInnerExams { get; set; }
+    public  DbSet<EntrantsOfInnerExam> EntrantsOfInnerExams { get; set; }
 
-    public virtual DbSet<Exam> Exams { get; set; }
+    public  DbSet<Exam> Exams { get; set; }
 
-    public virtual DbSet<ExamType> ExamTypes { get; set; }
+    public  DbSet<ExamType> ExamTypes { get; set; }
 
-    public virtual DbSet<ExamType100Ballov> ExamType100Ballovs { get; set; }
+    public  DbSet<ExamType100Ballov> ExamType100Ballovs { get; set; }
 
-    public virtual DbSet<Gragdanstvo> Gragdanstvos { get; set; }
+    public  DbSet<Gragdanstvo> Gragdanstvos { get; set; }
 
-    public virtual DbSet<GroupOfSpeciality> GroupOfSpecialities { get; set; }
+    public  DbSet<GroupOfSpeciality> GroupOfSpecialities { get; set; }
 
-    public virtual DbSet<GroupsOfSpecialitiesRelationship> GroupsOfSpecialitiesRelationships { get; set; }
+    public  DbSet<GroupsOfSpecialitiesRelationship> GroupsOfSpecialitiesRelationships { get; set; }
 
-    public virtual DbSet<LgotiBezEkz> LgotiBezEkzs { get; set; }
+    public  DbSet<LgotiBezEkz> LgotiBezEkzs { get; set; }
 
-    public virtual DbSet<LgotiVneKonk> LgotiVneKonks { get; set; }
+    public  DbSet<LgotiVneKonk> LgotiVneKonks { get; set; }
 
-    public virtual DbSet<LgotyPolupr> LgotyPoluprs { get; set; }
+    public  DbSet<LgotyPolupr> LgotyPoluprs { get; set; }
 
-    public virtual DbSet<ObrDokType> ObrDokTypes { get; set; }
+    public  DbSet<ObrDokType> ObrDokTypes { get; set; }
 
-    public virtual DbSet<ObrFroma> ObrFromas { get; set; }
+    public  DbSet<ObrFroma> ObrFromas { get; set; }
 
-    public virtual DbSet<ObrSrBal510> ObrSrBal510s { get; set; }
+    public  DbSet<ObrSrBal510> ObrSrBal510s { get; set; }
 
-    public virtual DbSet<ObrUchregd> ObrUchregds { get; set; }
+    public  DbSet<ObrUchregd> ObrUchregds { get; set; }
 
-    public virtual DbSet<ObrUroven> ObrUrovens { get; set; }
+    public  DbSet<ObrUroven> ObrUrovens { get; set; }
 
-    public virtual DbSet<ObrVid> ObrVids { get; set; }
+    public  DbSet<ObrVid> ObrVids { get; set; }
 
-    public virtual DbSet<OkskSpec> OkskSpecs { get; set; }
+    public  DbSet<OkskSpec> OkskSpecs { get; set; }
 
-    public virtual DbSet<OkskSpecSpecialization> OkskSpecSpecializations { get; set; }
+    public  DbSet<OkskSpecSpecialization> OkskSpecSpecializations { get; set; }
 
-    public virtual DbSet<OkskSpecialization> OkskSpecializations { get; set; }
+    public  DbSet<OkskSpecialization> OkskSpecializations { get; set; }
 
-    public virtual DbSet<PassportType> PassportTypes { get; set; }
+    public  DbSet<PassportType> PassportTypes { get; set; }
 
-    public virtual DbSet<PermissionUser> PermissionUsers { get; set; }
+    public  DbSet<PermissionUser> PermissionUsers { get; set; }
 
-    public virtual DbSet<Place> Places { get; set; }
+    public  DbSet<Place> Places { get; set; }
 
-    public virtual DbSet<PlaceAfterAccept> PlaceAfterAccepts { get; set; }
+    public  DbSet<PlaceAfterAccept> PlaceAfterAccepts { get; set; }
 
-    public virtual DbSet<PlaceUser> PlaceUsers { get; set; }
+    //public  DbSet<PlaceUser> PlaceUsers { get; set; }
 
-    public virtual DbSet<Prikaz> Prikazs { get; set; }
+    public  DbSet<Prikaz> Prikazs { get; set; }
 
-    public virtual DbSet<Register> Registers { get; set; }
+    public  DbSet<Register> Registers { get; set; }
 
-    public virtual DbSet<SpetializationGrade> SpetializationGrades { get; set; }
+    public  DbSet<SpetializationGrade> SpetializationGrades { get; set; }
 
-    public virtual DbSet<SsuzSpec> SsuzSpecs { get; set; }
+    public  DbSet<SsuzSpec> SsuzSpecs { get; set; }
 
-    public virtual DbSet<StatSpecGroup> StatSpecGroups { get; set; }
+    public  DbSet<StatSpecGroup> StatSpecGroups { get; set; }
 
-    public virtual DbSet<Table> Tables { get; set; }
+    public  DbSet<Table> Tables { get; set; }
 
-    public virtual DbSet<TablesAbitur> TablesAbiturs { get; set; }
+    public  DbSet<TablesAbitur> TablesAbiturs { get; set; }
 
-    public virtual DbSet<TablesLog> TablesLogs { get; set; }
+    public  DbSet<TablesLog> TablesLogs { get; set; }
 
-    public virtual DbSet<TablesQueue> TablesQueues { get; set; }
+    public  DbSet<TablesQueue> TablesQueues { get; set; }
 
-    public virtual DbSet<TablesState> TablesStates { get; set; }
+    public  DbSet<TablesState> TablesStates { get; set; }
 
-    public virtual DbSet<TablesTableToQueue> TablesTableToQueues { get; set; }
+    public  DbSet<TablesTableToQueue> TablesTableToQueues { get; set; }
 
-    public virtual DbSet<Vuz> Vuzs { get; set; }
+    public  DbSet<Vuz> Vuzs { get; set; }
 
-    public virtual DbSet<VuzFaclt> VuzFaclts { get; set; }
+    public  DbSet<VuzFaclt> VuzFaclts { get; set; }
 
-    public virtual DbSet<VuzSpec> VuzSpecs { get; set; }
+    public  DbSet<VuzSpec> VuzSpecs { get; set; }
 
-    public virtual DbSet<VuzSpecEkz> VuzSpecEkzs { get; set; }
+    public  DbSet<VuzSpecEkz> VuzSpecEkzs { get; set; }
 
-    public virtual DbSet<VuzSpecialization> VuzSpecializations { get; set; }
+    public  DbSet<VuzSpecialization> VuzSpecializations { get; set; }
 
-    public virtual DbSet<VuzSrok> VuzSroks { get; set; }
+    public  DbSet<VuzSrok> VuzSroks { get; set; }
 
-    public virtual DbSet<VuzSsuzSpec> VuzSsuzSpecs { get; set; }
+    public  DbSet<VuzSsuzSpec> VuzSsuzSpecs { get; set; }
 
-    //public virtual DbSet<VwAspnetApplication> VwAspnetApplications { get; set; }
+    //public  DbSet<VwAspnetApplication> VwAspnetApplications { get; set; }
 
-    //public virtual DbSet<VwAspnetMembershipUser> VwAspnetMembershipUsers { get; set; }
+    //public  DbSet<VwAspnetMembershipUser> VwAspnetMembershipUsers { get; set; }
 
-    //public virtual DbSet<VwAspnetProfile> VwAspnetProfiles { get; set; }
+    //public  DbSet<VwAspnetProfile> VwAspnetProfiles { get; set; }
 
-    //public virtual DbSet<VwAspnetRole> VwAspnetRoles { get; set; }
+    //public  DbSet<VwAspnetRole> VwAspnetRoles { get; set; }
 
-    //public virtual DbSet<VwAspnetUser> VwAspnetUsers { get; set; }
+    //public  DbSet<VwAspnetUser> VwAspnetUsers { get; set; }
 
-    //public virtual DbSet<VwAspnetUsersInRole> VwAspnetUsersInRoles { get; set; }
+    //public  DbSet<VwAspnetUsersInRole> VwAspnetUsersInRoles { get; set; }
 
-    //public virtual DbSet<VwAspnetWebPartStatePath> VwAspnetWebPartStatePaths { get; set; }
+    //public  DbSet<VwAspnetWebPartStatePath> VwAspnetWebPartStatePaths { get; set; }
 
-    //public virtual DbSet<VwAspnetWebPartStateShared> VwAspnetWebPartStateShareds { get; set; }
+    //public  DbSet<VwAspnetWebPartStateShared> VwAspnetWebPartStateShareds { get; set; }
 
-    //public virtual DbSet<VwAspnetWebPartStateUser> VwAspnetWebPartStateUsers { get; set; }
+    //public  DbSet<VwAspnetWebPartStateUser> VwAspnetWebPartStateUsers { get; set; }
 
-    public virtual DbSet<VwEntrantsOfInnerExam> VwEntrantsOfInnerExams { get; set; }
+    public  DbSet<VwEntrantsOfInnerExam> VwEntrantsOfInnerExams { get; set; }
 
-    public virtual DbSet<VwGroupsOfSpeciality> VwGroupsOfSpecialities { get; set; }
+    public  DbSet<VwGroupsOfSpeciality> VwGroupsOfSpecialities { get; set; }
 
-    public virtual DbSet<VwSpeciality> VwSpecialities { get; set; }
+    public  DbSet<VwSpeciality> VwSpecialities { get; set; }
 
-    public virtual DbSet<VwSpecialization> VwSpecializations { get; set; }
+    public  DbSet<VwSpecialization> VwSpecializations { get; set; }
 
-    public virtual DbSet<VwTmp> VwTmps { get; set; }
+    public  DbSet<VwTmp> VwTmps { get; set; }
 
     #endregion
 
@@ -629,10 +629,10 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser, I
                 .HasConstraintName("FK_Vuz_SSUZ_Spec_SSUZ_Spec");
         });
 
-        modelBuilder.Entity<Place>(entity =>
-        {
-            entity.HasMany(p => p.Users).WithMany(p => p.Places);
-        });
+        //modelBuilder.Entity<Place>(entity =>
+        //{
+        //    entity.HasMany(p => p.Users).WithOne(p => p.Place);
+        //});
 
 
         //modelBuilder.Entity<VwAspnetApplication>(entity =>

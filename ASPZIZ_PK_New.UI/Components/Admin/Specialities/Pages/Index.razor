@@ -1,0 +1,40 @@
+﻿@page "/admin/specialities"
+@rendermode InteractiveServer
+@layout Layout.LayoutAbitur
+@attribute [Authorize(Policy = "CanViewSpecialities")]
+
+<RadzenTabs @bind-SelectedIndex=@selectedIndex>
+    <Tabs>
+
+        <RadzenTabsItem Text="ОКСК">
+            <OKSK_List />
+        </RadzenTabsItem>
+
+
+        <RadzenTabsItem Text="Факультеты">
+
+            <FacultiesList/>
+
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Специальности">
+
+            <SpecialitiesList/>
+
+        </RadzenTabsItem>
+
+    </Tabs>
+</RadzenTabs>
+
+
+
+
+@code {
+
+
+    int selectedIndex;
+
+
+
+
+
+}

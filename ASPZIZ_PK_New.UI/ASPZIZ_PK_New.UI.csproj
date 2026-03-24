@@ -14,12 +14,17 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
+    <PackageReference Include="Radzen.Blazor" Version="8.3.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ASPZIZ_PK_New.Domain\ASPZIZ_PK_New.Domain.csproj" />
     <ProjectReference Include="..\ASPZIZ_PK_New.Features\ASPZIZ_PK_New.Features.csproj" />
     <ProjectReference Include="..\ASPZIZ_PK_New.Persistence\ASPZIZ_PK_New.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes\" />
   </ItemGroup>
 
 </Project>

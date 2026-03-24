@@ -1,0 +1,352 @@
+﻿@using ASPZIZ_PK_New.Features.Admin.Models
+@using ASPZIZ_PK_New.UI.Helpers
+@using Microsoft.AspNetCore.Components.Forms
+@* @rendermode InteractiveServer
+ *@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+<EditForm Model="UserModel" OnValidSubmit="SaveChandesAsync" FormName="EditUser">
+    <DataAnnotationsValidator />
+
+    <div id="commandcontainer" class="m-3">
+        <a class="restoreButton btn btn-outline-dark" href="admin/users/list"><i class="bi bi-arrow-bar-left"></i> Назад </a>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Сохранить</button>
+    </div>
+    <ValidationSummary class="text-danger" />
+    <RadzenTabs @bind-SelectedIndex=@selectedIndex>
+        <Tabs>
+            @if (User.Adm_Users_User_View)
+            {
+                <RadzenTabsItem Text="Пользователь">
+                    <table>
+                        <tr>
+                            <td><label>Полное имя для печати: </label></td>
+                            <td>
+                                <InputText @bind-Value="UserModel.FullName" class="form-control" autocomplete="off" />
+                                <ValidationMessage For="@(() => UserModel.FullName)" class="text-danger" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Аудитория: </td>
+                            <td>
+                                <InputSelect @bind-Value="SelectedPlaceId" class="form-select">
+                                    @foreach (var place in Places)
+                                    {
+                                        <option value="@place.PlaceId">@place.PlaceName</option>
+                                    }
+                                </InputSelect>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Логин: </td>
+                            <td>
+                                <InputText @bind-Value="UserModel.Login" class="form-control" />
+                                <ValidationMessage For="@(() => UserModel.Login)" class="text-danger" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Пароль: </td>
+                            <td>
+                                <InputText @bind-Value="UserModel.Password" class="form-control tooltiped pwd"
+                                           placeholder="Придумайте пароль" />
+                                <ValidationMessage For="@(() => UserModel.Password)" class="text-danger" />
+                            </td>
+                        </tr>
+                    </table>
+                </RadzenTabsItem>
+            }
+            @if (User.Adm_Users_Abiturs_View)
+            {
+                <RadzenTabsItem Text="Абитуриенты">
+                  
+                        <table class="table table-bordered">
+                            <tr>
+                                <th></th>
+                                <th>Эл.кабинет</th>
+                                <th>Очередь</th>
+                                <th>Принятые</th>
+                                <th>Зачисленные</th>
+                                <th>Не зачисленные</th>
+                                <th>Забранные</th>
+                            </tr>
+                            <tr>
+                                <td>Просмотреть</td>
+                                <td><InputCheckbox @bind-Value="UserModel.Site_View" /> </td>
+                                <td><InputCheckbox @bind-Value="UserModel.Turn_View" /> </td>
+                                <td><InputCheckbox @bind-Value="UserModel.Admission_View" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Accepted_View" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.NotAccepted_View" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Zabr_View" /></td>
+                            </tr>
+                            <tr>
+                                <td>Создать</td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Turn_Create" /></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Редактировать</td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Turn_Edit" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Admission_Edit" /></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Удалить</td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Turn_Delete" /></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Zabr_Delete" /></td>
+                            </tr>
+                            <tr>
+                                <td>Добавить в очередь</td>
+                                <td><InputCheckbox @bind-Value="UserModel.Site_AddToTurn" /></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Zabr_AddToOcher" /></td>
+                            </tr>
+                            <tr>
+                                <td>Принять документы</td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Turn_Admit" /></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Выдать документы</td>
+                                <td></td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Admission_Remove" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Accepted_Remove" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.NotAccepted_Remove" /></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Зачислить</td>
+                                <td></td>
+                                <td></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Admission_Accept" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.Accepted_Accept" /></td>
+                                <td><InputCheckbox @bind-Value="UserModel.NotAccepted_Accept" /></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    
+                </RadzenTabsItem>
+            }
+            @if (User.Adm_Users_Accept_View)
+            {
+                <RadzenTabsItem Text="Зачисление">
+                    <table class="table table-bordered">
+                        <tr><td><InputCheckbox @bind-Value="UserModel.Accept" /><label> Зачисление</label></td></tr>
+                        <table style="margin-left:20px;">
+                            <tr><td><InputCheckbox @bind-Value="UserModel.Accept_Draft_Create" /><label> Зачисление. Автоматическое зачисление.</label></td></tr>
+                            <tr><td><InputCheckbox @bind-Value="UserModel.Accept_Draft_Delete" /><label> Зачисление. Удалить проект приказа.</label></td></tr>
+                            <tr><td><InputCheckbox @bind-Value="UserModel.Accept_ByUser" /><label> Зачисление. Решение ПК.</label></td></tr>
+                            <tr><td><InputCheckbox @bind-Value="UserModel.Accept_Report" /><label> Зачисление. Отчет.</label></td></tr>
+                            <tr><td><InputCheckbox @bind-Value="UserModel.Accept_Submit" /><label> Зачисление. Подтвердить зачисление.</label></td></tr>
+                        </table>
+                    </table>
+                </RadzenTabsItem>
+            }
+            @if (User.Adm_Users_Statistic_View)
+            {
+                <RadzenTabsItem Text="Статистика">
+                    <table>
+                        <tr>
+                            <td>
+                                <InputCheckbox @bind-Value="UserModel.Stat" /><label>Статистика</label>
+                                <table style="margin-left:20px;">
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_Site" /><label>Статистика. Для сайта.</label>
+                                     </td></tr>
+                                    @*  <tr><td>@Html.CheckBoxFor(m => m.Permissions.Stat_Details)@Html.LabelFor(m => m.Permissions.Stat_Details)</td></tr>
+                    <tr><td>@Html.CheckBoxFor(m => m.Permissions.Stat_Print)@Html.LabelFor(m => m.Permissions.Stat_Print)</td></tr>*@
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_Excel_All" /><label>Статистика. Количеcтво: за всё время.</label>
+                                        </td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_Excel_Date" /><label>Статистика. Количество: по выбранным датам.</label>
+                                        </td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_Graphics" /><label>Статистика. Графики.</label>
+                                        </td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_Excel_Giac" /><label>Статистика. ГИАЦ.</label>
+                                        </td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_Details" /><label>Статистика. Подробно.</label>
+                                        </td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_ForTechnicalSecretary" /><label>Статистика. Для технических секретарей.</label>
+                                        </td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_BySpecialities" /><label>Статистика. Внутренний: Информация о ходе приема документов.</label>
+                                        </td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_ExaminationSheet" /><label>Статистика. Сводная экзаменационная ведомость.</label>
+                                        </td></tr>
+                                    <tr><td><hr /></td></tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Stat_Additional_Info" /><label>Статистика. Доп. инфо об абитуриенте.</label>
+                                        </td></tr>
+
+
+                                    <tr><td><hr /></td></tr>
+                                    <tr><td>
+                                            <InputCheckbox @bind-Value="UserModel.Print" /><label>Печать.</label>
+                                        </td></tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </RadzenTabsItem>
+            }
+             @if (User.Adm)
+             {
+                <RadzenTabsItem Text="Администрирование">
+            
+                    <table>
+                        <tr>
+                            <td>
+                                <InputCheckbox @bind-Value="@UserModel.Adm" /> <label>Администрирование</label>
+                                <table style="margin-left: 20px;">
+                                    <tr>
+                                        <td><InputCheckbox @bind-Value="UserModel.Adm_Specialities_View" /> <label>Специальности</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <InputCheckbox @bind-Value="UserModel.Adm_Users_View" /> <label>Раздел Пользователи</label>
+                                            <table style="margin-left: 20px;">
+                                                <tr>
+                                                    <td><InputCheckbox @bind-Value="UserModel.Adm_Users_User_View" /> <label>Пользователь</label></td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <table style="margin-left: 20px;">
+                                                            <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_User_Create" /> <label>Пользователь.Создать</label></td></tr>
+                                                            <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_User_Delete" /> <label>Пользователь.Удалить</label></td></tr>
+                                                            <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_User_Lock" /> <label>Пользователь.Блокировать</label></td></tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_Abiturs_View" /> <label> Закладка Абитуриенты</label></td></tr>
+                                                <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_Accept_View" /> <label> Закладка Зачисление</label></td></tr>
+                                                <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_Statistic_View" /> <label> Закладка Статистика</label></td></tr>
+                                                <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_Admin_View" /> <label> Закладка Администрирование</label></td></tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                        <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Users_Tables_View" /> <label> Управление столами</label></td></tr>
+                                        <tr><td><InputCheckbox @bind-Value="UserModel.Adm_Print_View" /> <label> Печать</label></td></tr>
+
+                                    <tr>
+                                        <td><InputCheckbox @bind-Value="UserModel.Adm_Compare_Data" /> <label> Сравнение файлов</label></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+               
+                </RadzenTabsItem>
+            }
+        </Tabs>
+    </RadzenTabs>
+</EditForm>
+
+
+@code {
+    [Inject] public ISender Sender { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+    [Parameter]
+    public UserFullModel UserInfo { get; set; }
+
+
+    UserFullModel UserModel;
+    // ensure EditContext is available (provided by parent via CascadingValue / EditForm)
+    //[CascadingParameter] EditContext? CascadedEditContext { get; set; }
+    //EditContext editContext;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+    ClaimsPrincipal User { get; set; } = default!;
+    int selectedIndex = 0;
+
+    IEnumerable<Place> Places = new List<Place>();
+
+    Place SelectedPlace { get; set; } = null!;
+
+    int SelectedPlaceId
+    {
+        get => UserModel.Place?.PlaceId ?? 0;
+        set
+        {
+            // update model instance so EditContext sees the change
+            UserModel.Place = Places.FirstOrDefault(p => p.PlaceId == value);
+            // notify EditContext about field change if available
+
+            //editContext?.NotifyFieldChanged(new FieldIdentifier(UserModel, nameof(UserModel.Place)));
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // UserModel = UserInfo;
+        // //UserModel.Password = String.Empty;
+        // Places = await Sender.Send(new GetPlaces());
+        // if (UserModel.Place == null)
+        //     UserModel.Place = Places.FirstOrDefault(pl => pl.PlaceId == 0);
+
+        // SelectedPlace = UserModel.Place!;
+       
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateTask;
+        User = state.User;
+
+
+        UserModel = UserInfo;
+        //UserModel.Password = String.Empty;
+        Places = await Sender.Send(new GetPlaces());
+        if (UserModel.Place == null)
+            UserModel.Place = Places.FirstOrDefault(pl => pl.PlaceId == 0);
+
+        SelectedPlace = UserModel.Place!;
+
+
+        //editContext = new EditContext(UserModel);
+        //editContext.Validate();
+    }
+
+    async Task SaveChandesAsync()
+    {
+
+
+        await Sender.Send(new UpdateUser(UserModel));
+        Navigation.NavigateTo("/admin/users/list");
+
+    }
+}

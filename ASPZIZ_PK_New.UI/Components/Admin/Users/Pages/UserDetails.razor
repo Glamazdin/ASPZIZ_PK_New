@@ -1,0 +1,109 @@
+﻿@page "/admin/user/details/{Id?}"
+@layout Layout.LayoutAbitur
+@using System.Diagnostics
+@using ASPZIZ_PK_New.Features.Admin.Models
+@using ASPZIZ_PK_New.UI.Components.Admin.Users.Components
+@using Microsoft.AspNetCore.Components.Forms
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+<h3>Информация о пользователе</h3>
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>У вас нет прав просматривать эту страницу</h3>
+    </NotAuthorized>
+    <Authorized Context="auth">
+        @if (isLoading)
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        }
+        else
+        {
+            
+
+                <table style="padding:5em; margin:1em">
+                    <tr>
+                        <td>Полное имя для печати:</td>
+                        <td>@UserInfo.FullName</td>
+                    </tr>
+                    <tr>
+                        <td>Имя для входа в систему:</td>
+                        <td>@UserInfo.Login</td>
+                    </tr>
+                    <tr>
+                        <td>Аудитория:</td>
+                        <td>@UserInfo.Place?.PlaceName</td>
+                    </tr>
+                    <tr>
+                        <td><label>Должность (столы):</label>&nbsp;</td>
+                        <td>@duty</td>
+                    </tr>
+                </table>
+
+                
+                    <UserDetailsEditor UserInfo="UserInfo" />
+                
+            
+
+        }
+
+    </Authorized>
+</AuthorizeView>
+
+
+
+@code {
+
+    bool isLoading = true;
+    [Parameter] public string Id { get; set; } = String.Empty;
+    [Inject] ISender Sender { get; set; }
+
+    //EditContext? editContext;
+    
+    UserFullModel UserInfo = new(Guid.Empty, null, null, null);
+
+    string duty = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        // create initial EditContext so inputs can bind even before load
+        //editContext = new EditContext(UserInfo);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // load user once
+        if (UserInfo.Id == Guid.Empty && Guid.TryParse(Id, out var userId))
+        {
+            try
+            {
+                var user = await Sender.Send(new GetUserDetails(userId));
+                user.Password = String.Empty; // Хэш пароля не нужен. Если поле останется пустым, то пароль не изменится в БД
+
+                UserInfo = user;
+
+                duty = UserInfo switch
+                {
+                    _ when UserInfo.Table => "Стол",
+                    _ when UserInfo.Table_Duty => "Дежурный",
+                    _ when UserInfo.Table_Supervisor => "Наблюдатель",
+                    _ => "Не задействован"
+                };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка загрузки: {ex.Message}");
+            }
+        }
+        
+
+        // recreate EditContext for the loaded instance so validation & InputBase components work
+        //editContext = new EditContext(UserInfo);
+
+        isLoading = false;
+    }
+
+    
+
+}

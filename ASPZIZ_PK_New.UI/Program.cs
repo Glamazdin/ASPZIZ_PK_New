@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -44,7 +45,10 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(opt => {
+    opt.AddPolicy("CanViewUsers", p => p.RequireClaim("Adm_Users_User_View"));
+    opt.AddPolicy("CanViewSpecialities", p => p.RequireClaim("Adm_Specialities_View"));
+});
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 builder.Services.AddHttpContextAccessor();
@@ -52,8 +56,13 @@ builder.Services.AddHttpContextAccessor();
 // Add user services
 builder.Services.AddFeatures();
 
+// заменяем стандартный UserClaimsPrincipalFactory на кастомный
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>,
                           ApplicationUserClaimsPrincipalFactory>();
+
+// заменяем стандартный SignInManager на кастомный
+builder.Services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
+builder.Services.AddRadzenComponents();
 
 var app = builder.Build();
 
@@ -80,7 +89,7 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
-//await RegisterAdmin(app);
+await RegisterAdmin(app);
 
 app.Run();
 

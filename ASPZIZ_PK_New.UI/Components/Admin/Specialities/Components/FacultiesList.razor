@@ -1,0 +1,66 @@
+﻿@rendermode InteractiveServer
+@inject DialogService DialogService
+<div id="commandcontainer" class="m-3">
+
+    <a class="btn btn-success" id="newButton" href="admin/faculty/create"><i class="bi bi-plus-circle"></i> Создать </a>
+
+    <button class="btn btn-primary ms-1" id="detailsButton" @onclick="OnDetails"><i class="bi bi-pencil"></i> Изменить </button>
+
+    <button class="btn btn-danger ms-1"
+            id="deleteButton" @onclick="OnDelete">
+        <i class="bi bi-trash"></i> Удалить
+    </button>
+
+</div>
+<RadzenDataGrid Data="@faculties" TItem="FacultyListModel"
+                Density="Density.Compact"
+                AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true"
+                FilterMode="FilterMode.Advanced" AllowSorting="true"
+                RowRender="@OnRowRender"
+                ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedFaculty>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(FacultyListModel.FacltNameRu)" Title="Название" />
+        <RadzenDataGridColumn Property="@nameof(FacultyListModel.FacltAbbrRu)" Title="Аббревиатура" />  
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Inject] ISender Sender { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+
+
+
+    IQueryable<FacultyListModel> faculties;
+    IList<FacultyListModel> selectedFaculty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        faculties = (await Sender.Send(new GetFacultiesList())).AsQueryable();
+        selectedFaculty = new List<FacultyListModel>() { faculties.FirstOrDefault() };
+    }
+
+    void OnRowRender(RowRenderEventArgs<FacultyListModel> args)
+    {
+        // добавляем атрибут двойного клика
+        args.Attributes["ondblclick"] = EventCallback.Factory.Create<MouseEventArgs>(this, OnDetails);
+
+    }
+
+    void OnDetails()
+    {
+        Navigation.NavigateTo($"admin/faculty/details/{selectedFaculty.First().FacltId}");
+        // здесь любая логика — например, открыть диалог
+
+    }
+    private async Task OnDelete(MouseEventArgs args)
+    {
+        var result = await DialogService.Confirm(
+            message: $"{selectedFaculty.First().FacltNameRu}",
+            title: "Вы уверены, что хотите удалить?",
+            options: new ConfirmOptions() { OkButtonText = "Да", CancelButtonText = "Нет" }
+        );
+
+        
+    }
+}

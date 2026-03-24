@@ -24,5 +24,5 @@ public partial class PermissionUser
 
     [ForeignKey("UserId")]
     [InverseProperty("PermissionUsers")]
-    public virtual ApplicationUser User { get; set; } = null!;
+    public ApplicationUser User { get; set; } = null!;
 }

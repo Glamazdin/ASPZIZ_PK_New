@@ -58,3 +58,9 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* фон для всех заголовков таблицы Radzen */
+.rz-datatable-thead {
+    background-color: #2c3e50; /* тёмно-серый фон */
+    color: white; /* цвет текста */
+}
