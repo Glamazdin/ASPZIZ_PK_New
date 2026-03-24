@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 
+using ASPZIZ_PK_New.Domain.Enums;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -57,8 +59,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddFeatures();
 
 // заменяем стандартный UserClaimsPrincipalFactory на кастомный
-builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>,
-                          ApplicationUserClaimsPrincipalFactory>();
+//builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>,
+//                          ApplicationUserClaimsPrincipalFactory>();
 
 // заменяем стандартный SignInManager на кастомный
 builder.Services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
@@ -89,7 +91,8 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
-await RegisterAdmin(app);
+//await RegisterAdmin(app);
+//await MigratePermissionsToClaims(app);
 
 app.Run();
 
@@ -114,4 +117,29 @@ async Task RegisterAdmin(WebApplication app)
     };
     var result = await um.CreateAsync(user, "123456");
 
+}
+
+async Task MigratePermissionsToClaims(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    using var um = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    var permissions = await scope.ServiceProvider
+        .GetRequiredService<ApplicationDbContext>()
+        .PermissionUsers
+        .ToListAsync();
+
+    // process sequentially to avoid concurrent use of scoped DbContext / UserManager
+    foreach (var p in permissions)
+    {
+        var user = await um.FindByIdAsync(p.UserId.ToString());
+        if (user == null)
+            continue;
+
+        var name = Enum.GetName(typeof(PermissionsAspziz), p.PermissionId);
+        if (string.IsNullOrEmpty(name))
+            continue;
+
+        await um.AddClaimAsync(user, new System.Security.Claims.Claim(name, "true"));
+    }
 }

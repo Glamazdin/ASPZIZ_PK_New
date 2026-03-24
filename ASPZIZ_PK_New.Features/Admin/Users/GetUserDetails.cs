@@ -23,7 +23,8 @@ public class GetUserDetailsHandler(ApplicationDbContext db) : IRequestHandler<Ge
     public async Task<UserFullModel> Handle(GetUserDetails request, CancellationToken cancellationToken=default)
     {
         var user = await db.Users
-            .Include(u => u.PermissionUsers)
+            //.Include(u => u.PermissionUsers)
+            //.Include(u=>u.User)
             .Include(u=>u.Place)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id.Equals(request.Id));
@@ -35,16 +36,26 @@ public class GetUserDetailsHandler(ApplicationDbContext db) : IRequestHandler<Ge
                                         user.FullName, 
                                         user.Place
                                         );
+
+        var claims = db.UserClaims.Where(uc => uc.UserId == user.Id).ToList();
         Type modelType = typeof( UserFullModel );
 
-        foreach(var permission in user.PermissionUsers)
+        foreach(var claim in claims)
         {
-            string name = Enum.GetName(typeof(PermissionsAspziz), permission.PermissionId);
-
+            string name = claim.ClaimType;
             var propInfo = modelType.GetProperty(name);
             //if (propInfo == null) continue;
             propInfo.SetValue(model, true);
         }
+
+        //foreach (var permission in user.PermissionUsers)
+        //{
+        //    string name = Enum.GetName(typeof(PermissionsAspziz), permission.PermissionId);
+
+        //    var propInfo = modelType.GetProperty(name);
+        //    //if (propInfo == null) continue;
+        //    propInfo.SetValue(model, true);
+        //}
 
 
         return model;

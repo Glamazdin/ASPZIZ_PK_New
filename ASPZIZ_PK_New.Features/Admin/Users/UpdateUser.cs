@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 
 namespace ASPZIZ_PK_New.Features.Admin.Users
@@ -48,7 +49,9 @@ namespace ASPZIZ_PK_New.Features.Admin.Users
             // изменить разрешения
 
             // удалить старые разрешения
-            await db.PermissionUsers.Where(p => p.UserId == user.Id).ExecuteDeleteAsync();
+            //await db.PermissionUsers.Where(p => p.UserId == user.Id).ExecuteDeleteAsync();
+            var claims = await userManager.GetClaimsAsync(user);
+            await userManager.RemoveClaimsAsync(user, claims);
 
             // найти все свойства типа bool
             var userModelType = typeof(UserFullModel);
@@ -58,21 +61,26 @@ namespace ASPZIZ_PK_New.Features.Admin.Users
                 .ToList();
 
             // добавить разрешения
-            var permList = new List<PermissionUser>();
+            //var permList = new List<PermissionUser>();
+
+            var permList = new List<Claim>();
             foreach (var perm in boolProps)
             {
-                if (Enum.TryParse<PermissionsAspziz>(perm.Name, out PermissionsAspziz permission))
+                //permList.Add(new Claim(perm.Name, ((bool)perm.GetValue(request.user)).ToString()));
+                //if (Enum.TryParse<PermissionsAspziz>(perm.Name, out PermissionsAspziz permission))
+                //{
+                if ((bool)perm.GetValue(request.user))
                 {
-                    if((bool)perm.GetValue(request.user))
-                    {
-                        permList.Add(new PermissionUser { UserId = user.Id, PermissionId = ((byte)permission) });
-                    }
-                }      
+                    permList.Add(new Claim(perm.Name,"true"));
+                }
+                //}      
             }
             if (permList.Count != 0)
             {
-                await db.PermissionUsers.AddRangeAsync(permList);
-                await db.SaveChangesAsync();
+                
+                await userManager.AddClaimsAsync(user, permList);
+                //await db.PermissionUsers.AddRangeAsync(permList);
+                //await db.SaveChangesAsync();
             }
         }
     }
