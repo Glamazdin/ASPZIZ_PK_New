@@ -23,7 +23,7 @@ public class ApplicationUser : IdentityUser<Guid>
     
     //public virtual ICollection<AspnetPersonalizationPerUser> AspnetPersonalizationPerUsers { get; set; } = new List<AspnetPersonalizationPerUser>();
     
-    public  ICollection<PermissionUser> PermissionUsers { get; set; } = new List<PermissionUser>();
+    //public  ICollection<PermissionUser> PermissionUsers { get; set; } = new List<PermissionUser>();
     
    // public virtual ICollection<PlaceUser> PlaceUsers { get; set; } = new List<PlaceUser>();
     

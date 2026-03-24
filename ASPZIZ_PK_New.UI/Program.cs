@@ -119,27 +119,27 @@ async Task RegisterAdmin(WebApplication app)
 
 }
 
-async Task MigratePermissionsToClaims(WebApplication app)
-{
-    using var scope = app.Services.CreateScope();
-    using var um = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+//async Task MigratePermissionsToClaims(WebApplication app)
+//{
+//    using var scope = app.Services.CreateScope();
+//    using var um = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    var permissions = await scope.ServiceProvider
-        .GetRequiredService<ApplicationDbContext>()
-        .PermissionUsers
-        .ToListAsync();
+//    var permissions = await scope.ServiceProvider
+//        .GetRequiredService<ApplicationDbContext>()
+//        .PermissionUsers
+//        .ToListAsync();
 
-    // process sequentially to avoid concurrent use of scoped DbContext / UserManager
-    foreach (var p in permissions)
-    {
-        var user = await um.FindByIdAsync(p.UserId.ToString());
-        if (user == null)
-            continue;
+//    // process sequentially to avoid concurrent use of scoped DbContext / UserManager
+//    foreach (var p in permissions)
+//    {
+//        var user = await um.FindByIdAsync(p.UserId.ToString());
+//        if (user == null)
+//            continue;
 
-        var name = Enum.GetName(typeof(PermissionsAspziz), p.PermissionId);
-        if (string.IsNullOrEmpty(name))
-            continue;
+//        var name = Enum.GetName(typeof(PermissionsAspziz), p.PermissionId);
+//        if (string.IsNullOrEmpty(name))
+//            continue;
 
-        await um.AddClaimAsync(user, new System.Security.Claims.Claim(name, "true"));
-    }
-}
+//        await um.AddClaimAsync(user, new System.Security.Claims.Claim(name, "true"));
+//    }
+//}

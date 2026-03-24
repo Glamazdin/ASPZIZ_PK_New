@@ -19,24 +19,24 @@ var oldConnStr = "Server=.\\SQLEXPRESS;Database=CLEAR_ASPZIZ_PK;Integrated Secur
 using var db = new ApplicationDbContext(options);
 
 
-var debug = db.Users.Include(u => u.PermissionUsers).First(u => u.NormalizedUserName.Equals("DEBUG"));
-debug.PermissionUsers.Add(new PermissionUser
-{
-    PartId = 4,
-    PermissionId = (byte)PermissionsAspziz.Adm_Users_User_View
-});
-debug.PermissionUsers.Add(new PermissionUser
-{
-    PartId = 4,
-    PermissionId = (byte)PermissionsAspziz.Adm_Users_View
-});
-debug.PermissionUsers.Add(new PermissionUser
-{
-    PartId = 4,
-    PermissionId = (byte)PermissionsAspziz.Adm
-});
+//var debug = db.Users.Include(u => u.PermissionUsers).First(u => u.NormalizedUserName.Equals("DEBUG"));
+//debug.PermissionUsers.Add(new PermissionUser
+//{
+//    PartId = 4,
+//    PermissionId = (byte)PermissionsAspziz.Adm_Users_User_View
+//});
+//debug.PermissionUsers.Add(new PermissionUser
+//{
+//    PartId = 4,
+//    PermissionId = (byte)PermissionsAspziz.Adm_Users_View
+//});
+//debug.PermissionUsers.Add(new PermissionUser
+//{
+//    PartId = 4,
+//    PermissionId = (byte)PermissionsAspziz.Adm
+//});
 
-await db.SaveChangesAsync();
+//await db.SaveChangesAsync();
 
 
 

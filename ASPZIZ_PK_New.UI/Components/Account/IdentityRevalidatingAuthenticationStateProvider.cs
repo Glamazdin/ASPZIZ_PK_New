@@ -51,59 +51,59 @@ namespace ASPZIZ_PK_New.UI.Components.Account
             }
         }
 
-        public async Task SetClaimsAsync()
-        {
+        //public async Task SetClaimsAsync()
+        //{
 
-            var httpContext = httpContextAccessor.HttpContext;
-            if (httpContext == null)
-                return; 
+        //    var httpContext = httpContextAccessor.HttpContext;
+        //    if (httpContext == null)
+        //        return; 
 
-            var user = httpContext.User;
-            if (!user.Identity.IsAuthenticated)
-                return; 
+        //    var user = httpContext.User;
+        //    if (!user.Identity.IsAuthenticated)
+        //        return; 
 
-            // Получаем ID пользователя
-            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    // Получаем ID пользователя
+        //    var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userId))
-                return; 
+        //    if (string.IsNullOrEmpty(userId))
+        //        return; 
 
-            // Загружаем связанную сущность из БД
-            var dbUser = await db.Users
-                .Include(u => u.PermissionUsers) // предположим, навигационное свойство Profile
-                .FirstOrDefaultAsync(u => u.Id == Guid.Parse(userId));
+        //    // Загружаем связанную сущность из БД
+        //    var dbUser = await db.Users
+        //        .Include(u => u.PermissionUsers) // предположим, навигационное свойство Profile
+        //        .FirstOrDefaultAsync(u => u.Id == Guid.Parse(userId));
 
-            if (dbUser == null)
-                return; 
+        //    if (dbUser == null)
+        //        return; 
 
-            // Создаём новый ClaimsPrincipal с расширенными claims
-            var identity = new ClaimsIdentity();
+        //    // Создаём новый ClaimsPrincipal с расширенными claims
+        //    var identity = new ClaimsIdentity();
 
-            // Копируем основные claims
-            identity.AddClaims(user.Claims);
+        //    // Копируем основные claims
+        //    identity.AddClaims(user.Claims);
 
-            // Добавляем кастомные claims из связанной таблицы
-            if (dbUser.PermissionUsers != null)
-            {
-                // получить все значения перечисления PermissionsAspziz
-                var permissionValues = Enum.GetValues(typeof(PermissionsAspziz))
-                    .Cast<PermissionsAspziz>()
-                    .Select(v => (byte)v)
-                    .ToArray();
+        //    // Добавляем кастомные claims из связанной таблицы
+        //    if (dbUser.PermissionUsers != null)
+        //    {
+        //        // получить все значения перечисления PermissionsAspziz
+        //        var permissionValues = Enum.GetValues(typeof(PermissionsAspziz))
+        //            .Cast<PermissionsAspziz>()
+        //            .Select(v => (byte)v)
+        //            .ToArray();
 
-                // добавить Claim для кажного разрешения
-                foreach (var item in permissionValues)
-                {
-                    var value = dbUser.PermissionUsers.Any(p => p.PermissionId == item);
-                    var name = Enum.GetName(typeof(PermissionsAspziz), item);
-                    identity.AddClaim(new Claim(name, value.ToString()));
-                }
-                // Можно добавить и другие данные: Email, роль из профиля и т.д.
-            }
+        //        // добавить Claim для кажного разрешения
+        //        foreach (var item in permissionValues)
+        //        {
+        //            var value = dbUser.PermissionUsers.Any(p => p.PermissionId == item);
+        //            var name = Enum.GetName(typeof(PermissionsAspziz), item);
+        //            identity.AddClaim(new Claim(name, value.ToString()));
+        //        }
+        //        // Можно добавить и другие данные: Email, роль из профиля и т.д.
+        //    }
 
-            var newPrincipal = new ClaimsPrincipal(identity);
-            var authState = Task.FromResult(new AuthenticationState(newPrincipal));
-            NotifyAuthenticationStateChanged(authState);
-        }
+        //    var newPrincipal = new ClaimsPrincipal(identity);
+        //    var authState = Task.FromResult(new AuthenticationState(newPrincipal));
+        //    NotifyAuthenticationStateChanged(authState);
+        //}
     }
 }

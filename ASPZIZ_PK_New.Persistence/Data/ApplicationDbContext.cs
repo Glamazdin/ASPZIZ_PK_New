@@ -101,7 +101,7 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser, I
 
     public  DbSet<PassportType> PassportTypes { get; set; }
 
-    public  DbSet<PermissionUser> PermissionUsers { get; set; }
+    //public  DbSet<PermissionUser> PermissionUsers { get; set; }
 
     public  DbSet<Place> Places { get; set; }
 
@@ -439,12 +439,12 @@ public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser, I
             entity.HasKey(e => e.PasTypeId).HasName("PK_Doc");
         });
 
-        modelBuilder.Entity<PermissionUser>(entity =>
-        {
-            entity.HasOne(d => d.User).WithMany(p => p.PermissionUsers)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PermissionUser_AspNetUsers");
-        });
+        //modelBuilder.Entity<PermissionUser>(entity =>
+        //{
+        //    entity.HasOne(d => d.User).WithMany(p => p.PermissionUsers)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("FK_PermissionUser_AspNetUsers");
+        //});
 
         modelBuilder.Entity<PlaceAfterAccept>(entity =>
         {
