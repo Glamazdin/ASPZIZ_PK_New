@@ -1,0 +1,104 @@
+@page "/admin/OKSK/create"
+@layout Layout.LayoutAbitur
+@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components.Forms
+@using Radzen
+@using ASPZIZ_PK_New.Features.Admin.Models
+@rendermode InteractiveServer
+@attribute [Authorize(Policy = "CanViewSpecialities")]
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-12 col-md-8">
+            <h3>Создать специальность ОКСК</h3>
+
+            <EditForm EditContext="@editcontext" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="mb-3">
+                    <label class="form-label">Название</label>
+                    <InputText class="form-control" @bind-Value="Model.Name" />
+                    <ValidationMessage For="@(() => Model.Name)" class="text-danger" />
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label">Код</label>
+                        <InputText class="form-control" @bind-Value="Model.Code" />
+                        <ValidationMessage For="@(() => Model.Code)" class="text-danger" />
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label">Аббревиатура</label>
+                        <InputText class="form-control" @bind-Value="Model.Abbr" />
+                        <ValidationMessage For="@(() => Model.Abbr)" class="text-danger" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Квалификация</label>
+                    <InputText class="form-control" @bind-Value="Model.Kvalif" />
+                    <ValidationMessage For="@(() => Model.Kvalif)" class="text-danger" />
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Сохранить</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel"><i class="bi bi-x-circle"></i> Отмена</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] ISender Sender { get; set; } = default!;
+    [Inject] NavigationManager Navigation { get; set; } = default!;
+    [Inject] ILogger<CreateOKSK> Logger { get; set; } = default!;
+
+    EditContext? editcontext;
+    ValidationMessageStore? messageStore;
+
+    // shared model with DataAnnotations
+    OKSKListModel Model = new();
+
+    protected override void OnInitialized()
+    {
+        editcontext = new EditContext(Model);
+        messageStore = new ValidationMessageStore(editcontext);
+    }
+
+    async Task SaveAsync()
+    {
+        if (editcontext == null) return;
+
+        messageStore?.Clear();
+        editcontext.NotifyValidationStateChanged();
+
+        if (!editcontext.Validate())
+            return;
+
+        try
+        {
+            // pass the model object to the command
+            var id = await Sender.Send(new CreateOkskSpecCommand(Model));
+
+            Debug.WriteLine($"Create OKSK id={id}: {Model.Name}");
+            Navigation.NavigateTo("/admin/OKSK/list");
+        }
+        catch (InvalidOperationException ex)
+        {
+            messageStore?.Add(new FieldIdentifier(Model, nameof(Model.Name)), ex.Message);
+            editcontext.NotifyValidationStateChanged();
+            Logger?.LogWarning(ex, "Attempt to create duplicate OKSK");
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error creating OKSK");
+            messageStore?.Add(new FieldIdentifier(Model, string.Empty), "Ошибка при сохранении.");
+            editcontext.NotifyValidationStateChanged();
+        }
+    }
+
+    void Cancel() => Navigation.NavigateTo("/admin/specialities");
+}

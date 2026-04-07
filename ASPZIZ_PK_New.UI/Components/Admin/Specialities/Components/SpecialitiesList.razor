@@ -1,4 +1,8 @@
-﻿<style>
+﻿@using ASPZIZ_PK_New.Features.Admin.Models
+@using Microsoft.AspNetCore.Components.Forms
+@rendermode InteractiveServer
+
+<style>
     .wrap-cell {
         white-space: normal !important;
         word-break: break-word;
@@ -6,43 +10,39 @@
         padding: 0.25rem 0.5rem; /* соответствует Compact-режиму */
     }
 </style>
+
 <div id="commandcontainer" class="m-3">
-
-    <a class="btn btn-success" id="newButton" href="admin/OKSK/create"><i class="bi bi-plus-circle"></i> Создать </a>
-
+    <a class="btn btn-success" id="newButton" href="@($"admin/VuzSpec/create{(SelectedFacultyId.HasValue ? "/" + SelectedFacultyId.Value.ToString() : "")}")"><i class="bi bi-plus-circle"></i> Создать </a>
     <button class="btn btn-primary ms-1" id="detailsButton" @onclick="OnDetails"><i class="bi bi-pencil"></i> Изменить </button>
-
-    <button class="btn btn-danger ms-1"
-            id="deleteButton" @onclick="OnDelete">
-        <i class="bi bi-trash"></i> Удалить
-    </button>
-
+    <button class="btn btn-danger ms-1" id="deleteButton" @onclick="OnDelete"><i class="bi bi-trash"></i> Удалить</button>
 </div>
-@* <RadzenDataGrid Data="@specialities" TItem="SpecialityListModel"
-                Density="Density.Compact"
-                AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true"
-                FilterMode="FilterMode.Advanced" AllowSorting="true"
-                RowRender="@OnRowRender"
-                ColumnWidth="auto" 
-                LogicalFilterOperator="LogicalFilterOperator.Or"
-                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedSpecialities>
-    <Columns>
-        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.FacultyName)" Title="Факультет" />
-        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.SpecialityName)" Title="Название" />
-        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.ObrFormaName)" Title="Форма обучения" />
-        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.ObrVidName)" Title="Вид обучения" />
-        <RadzenDataGridColumn Width="150px" Property="@nameof(SpecialityListModel.Oplata)" Title="Оплата" />
-        <RadzenDataGridColumn Property="@nameof(SpecialityListModel.Srok)" Title="Срок обучения" />
-        <RadzenDataGridColumn Width="150px" Property="@nameof(SpecialityListModel.KolvoMest)" Title="План приема" />
 
-    </Columns>
-</RadzenDataGrid> *@
+<!-- Filters -->
+<div class="mb-3 row align-items-center">
+    <div class="col-auto">
+        <label class="form-label mb-0">Факультет</label>
+        <InputSelect TValue="short?" class="form-select" @bind-Value="SelectedFacultyId">
+            <option value="">Все факультеты</option>
+            @foreach (var f in faculties)
+            {
+                <option value="@f.FacltId">@f.FacltNameRu</option>
+            }
+        </InputSelect>
+    </div>
 
-<RadzenDataGrid Data="@specialities" TItem="SpecialityListModel"
+    <div class="col-auto ms-3">
+        <div class="form-check mt-3">
+            <InputCheckbox class="form-check-input" @bind-Value="ShowCelevOnly" />
+            <label class="form-check-label">Показать только целевые</label>
+        </div>
+    </div>
+</div>
+
+<RadzenDataGrid Data="@displayedSpecialities" TItem="SpecialityListModel"
                 Density="Density.Compact"
                 AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="true"
                 FilterMode="FilterMode.Advanced" AllowSorting="false"
-                RowRender="@OnRowRender"                
+                RowRender="@OnRowRender"
                 ColumnWidth="auto"
                 LogicalFilterOperator="LogicalFilterOperator.Or"
                 SelectionMode="DataGridSelectionMode.Single" @bind-Value="@selectedSpecialities">
@@ -90,38 +90,102 @@
     [Inject] NavigationManager Navigation { get; set; }
     [Inject] DialogService DialogService { get; set; }
 
+    // data
+    List<SpecialityListModel> specialities = new();
+    IEnumerable<SpecialityListModel> displayedSpecialities => specialities
+        .Where(s => (!showCelevOnly || s.CelevB));
 
-    IQueryable<SpecialityListModel> specialities;
+    // faculties for filter
+    List<FacultyListModel> faculties = new();
+
+    // selected values for filters
+    short? selectedFacultyId;
+    bool showCelevOnly = false;
+
     IList<SpecialityListModel> selectedSpecialities;
 
     protected override async Task OnInitializedAsync()
     {
-        specialities = (await Sender.Send(new GetSpecialitiesList(null))).AsQueryable();
-        selectedSpecialities = new List<SpecialityListModel>() { specialities.FirstOrDefault() };
+        // load faculties for dropdown
+        var facs = await Sender.Send(new GetFacultiesList());
+        faculties = facs?.ToList() ?? new List<FacultyListModel>();
+
+        // initial load of specialities (no faculty filter)
+        await LoadSpecialitiesAsync();
+        selectedSpecialities = new List<SpecialityListModel>() { displayedSpecialities.FirstOrDefault() };
+    }
+
+    async Task LoadSpecialitiesAsync()
+    {
+        // request from server by faculty (server will filter by faculty if provided)
+        var list = await Sender.Send(new GetSpecialitiesList(selectedFacultyId));
+        specialities = list?.ToList() ?? new List<SpecialityListModel>();
+
+        // apply client-side 'celev' filter via displayedSpecialities getter
+        // reset selection to first item if any
+        selectedSpecialities = new List<SpecialityListModel>() { displayedSpecialities.FirstOrDefault() };
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // single correct handler for change events
+    async Task OnFilterChanged(ChangeEventArgs _)
+    {
+        await LoadSpecialitiesAsync();
     }
 
     void OnRowRender(RowRenderEventArgs<SpecialityListModel> args)
     {
         // добавляем атрибут двойного клика
         args.Attributes["ondblclick"] = EventCallback.Factory.Create<MouseEventArgs>(this, OnDetails);
-
     }
 
     void OnDetails()
     {
+        if (selectedSpecialities?.Any() != true) return;
         Navigation.NavigateTo($"admin/speciality/details/{selectedSpecialities.First().VuzSpecId}");
-        // здесь любая логика — например, открыть диалог
-
     }
+
     private async Task OnDelete(MouseEventArgs args)
     {
+        if (selectedSpecialities?.Any() != true) return;
+
         var result = await DialogService.Confirm(
             message: $"{selectedSpecialities.First().SpecialityName}",
             title: "Вы уверены, что хотите удалить?",
             options: new ConfirmOptions() { OkButtonText = "Да", CancelButtonText = "Нет" }
         );
 
-        //Debug.WriteLine($"----------------------> {result}");
+        // implement deletion when confirmed
     }
 
+    // backing fields
+    //short? selectedFacultyId;
+    //bool showCelevOnly = false;
+
+    public short? SelectedFacultyId
+    {
+        get => selectedFacultyId;
+        set
+        {
+            if (selectedFacultyId != value)
+            {
+                selectedFacultyId = value;
+                // fire-and-forget safe call — можно Await через InvokeAsync
+                _ = LoadSpecialitiesAsync();
+            }
+        }
+    }
+
+    public bool ShowCelevOnly
+    {
+        get => showCelevOnly;
+        set
+        {
+            if (showCelevOnly != value)
+            {
+                showCelevOnly = value;
+                _ = LoadSpecialitiesAsync();
+            }
+        }
+    }
 }

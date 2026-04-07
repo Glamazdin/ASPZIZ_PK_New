@@ -1,0 +1,149 @@
+@page "/admin/VuzSpec/create/{FacltId:int?}"
+@layout Layout.LayoutAbitur
+@using ASPZIZ_PK_New.Features.Admin.Models
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Diagnostics
+@using static ASPZIZ_PK_New.Features.Admin.Models.VuzSpecCreateModel
+@attribute [Authorize(Policy = "CanViewSpecialities")]
+@rendermode InteractiveServer
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-12 col-md-8">
+            <h3>Добавить специальность на факультет</h3>
+
+            <EditForm EditContext="@editContext" OnValidSubmit="SaveAsync" FormName="MainForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                
+
+                <div class="mb-3">
+                    <label class="form-label">Факультет</label>
+                    <InputSelect class="form-select" @bind-Value="Model.FacltId">
+                        <option value="0">Выберите факультет</option>
+                        @foreach (var f in faculties)
+                        {
+                            <option value="@f.FacltId">@f.FacltNameRu</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Model.FacltId)" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Специальность (OKSK)</label>
+                    <InputSelect class="form-select" @bind-Value="Model.SpecId">
+                        <option value="0">Выберите OKSK специальность</option>
+                        @foreach (var s in oksk)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Model.SpecId)" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Группа специальностей</label>
+                    <InputSelect TValue="byte" class="form-select" @bind-Value="Model.SpecGroupId">
+                         <option value="0">Выберите группу специальностей</option>
+                         @foreach (var g in groups)
+                        {
+                            <option value="@g.GroupId">@g.GroupName</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-6">
+                        <label class="form-label">План приема</label>
+                        <InputNumber class="form-control" @bind-Value="Model.KolvoMest" />
+                    </div>
+                    <div class="col-6">
+                        <div class="form-check mt-4">
+                            <InputCheckbox class="form-check-input" @bind-Value="Model.CelevB" />
+                            <label class="form-check-label">Целевая</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Добавить</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel">Отмена</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int? FacltId { get; set; }
+    [Inject] ISender Sender { get; set; } = default!;
+    [Inject] NavigationManager Navigation { get; set; } = default!;
+    [Inject] ILogger<AddVuzSpec> Logger { get; set; } = default!;
+
+    EditContext? editContext;
+    ValidationMessageStore? messageStore;
+
+
+    VuzSpecCreateModel Model = new();
+
+    List<FacultyListModel> faculties = new();
+    List<OKSKModel> oksk = new();
+
+    // groups for selection
+    List<GroupOfSpecialityModel> groups = new();
+
+    protected override void OnInitialized()
+    {
+        Model = new VuzSpecCreateModel();
+        if (FacltId.HasValue)
+            Model.FacltId = (short)FacltId.Value;
+
+        editContext = new EditContext(Model);
+        messageStore = new ValidationMessageStore(editContext);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var facs = await Sender.Send(new GetFacultiesList());
+        faculties = facs?.ToList() ?? new List<FacultyListModel>();
+
+        oksk = (await Sender.Send(new GetOKSKList())).ToList();
+
+        groups = (await Sender.Send(new GetGroupsList())) ?? new List<GroupOfSpecialityModel>();
+    }
+
+    async Task SaveAsync()
+    {
+        if (editContext == null) return;
+
+        messageStore?.Clear();
+        editContext.NotifyValidationStateChanged();
+        var valid = editContext.Validate();
+
+        if (!editContext.Validate())
+            return;
+
+        try
+        {
+            var id = await Sender.Send(new CreateVuzSpecCommand(Model));
+            Logger.LogInformation($"Добавлена специальность вуза id={id}");
+            Debug.WriteLine($"Created VuzSpec id={id}");
+            Navigation.NavigateTo("/admin/specialities");
+        }
+        catch (InvalidOperationException ex)
+        {
+            messageStore?.Add(new FieldIdentifier(Model, nameof(Model.SpecId)), ex.Message);
+            editContext.NotifyValidationStateChanged();
+            Logger.LogWarning(ex, $"Попытка создать специальность c тем же ОКСК ({oksk.First(s=>s.Id==Model.SpecId).Name})");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error creating VuzSpec");
+            messageStore?.Add(new FieldIdentifier(Model, string.Empty), "Ошибка при сохранении");
+            editContext?.NotifyValidationStateChanged();
+        }
+    }
+
+    void Cancel() => Navigation.NavigateTo("/admin/specialities");
+}

@@ -21,6 +21,7 @@ public class GetSpecialitiesListHandler(ApplicationDbContext db) : IRequestHandl
             .AsNoTracking()        
             .Where(s=> !request.FacultyId.HasValue ||s.FacltId==request.FacultyId.Value)
             .ProjectToType<SpecialityListModel>()
+            .OrderBy(s=>s.FacltId).ThenBy(s => s.SpecialityName).ThenBy(s=>s.ObrVidName).ThenBy(s=>s.OplataB)
             .ToListAsync(cancellationToken);      
     }
 }
