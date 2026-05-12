@@ -1,0 +1,39 @@
+@page "/abiturs/list"
+@layout Layout.LayoutAbitur
+
+@using Microsoft.AspNetCore.Components
+@using Radzen
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+<div class="container mt-3">
+    <h3>Список абитуриентов</h3>
+
+    <RadzenDataGrid Data="@abiturs" TItem="AbiturListModel"
+                    Density="Density.Compact"
+                    AllowFiltering="true" AllowSorting="true" AllowColumnResize="true"
+                    AllowPaging="true" PageSize="20"
+                    SelectionMode="DataGridSelectionMode.Single">
+        <Columns>
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.PersonalNumber)" Title="Личный номер" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.FullName)" Title="ФИО" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.Oplata)" Title="Платное/Бюджет" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.Srok)" Title="Срок обучения" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.CompetitionStatus)" Title="Конкурс/Статус" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.ObrForma)" Title="Форма обучения" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.FacultyAbbr)" Title="Факультет" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.SpecAbbr)" Title="Специальность" />
+            <RadzenDataGridColumn TItem="AbiturListModel" Property="@nameof(AbiturListModel.AcceptedBy)" Title="Кто принял" />
+        </Columns>
+    </RadzenDataGrid>
+</div>
+
+@code {
+    [Inject] ISender Sender { get; set; } = default!;
+    IEnumerable<AbiturListModel> abiturs = Array.Empty<AbiturListModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        abiturs = await Sender.Send(new GetAbitursList());
+    }
+}
